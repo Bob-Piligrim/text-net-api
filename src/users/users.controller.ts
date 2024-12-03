@@ -14,22 +14,25 @@ import { UpdateBalanceDto } from './dto/update.balance.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly userService: UsersService) {
+    console.log('UsersController is working');
+  }
 
   @Post('register')
   async registerUser(@Body() createUserDto: CreateUserDto) {
+    console.log('registerUser method is called');
     const user = await this.userService.createUser(createUserDto);
     return { message: 'User registered successfully', user };
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('balance')
   async getBalance(@Request() req): Promise<{ balance: number }> {
     const user = await this.userService.findByUsername(req.user.username);
     return { balance: user.balance };
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Put('balance')
   async updateBalance(
     @Request() req,

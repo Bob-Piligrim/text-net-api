@@ -1,8 +1,7 @@
-version: '3.8'
 services:
   postgres:
     image: postgres
-    container_name: nest_postgres
+    container_name: text_net_pg
     environment:
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5433

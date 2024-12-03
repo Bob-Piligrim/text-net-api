@@ -2,6 +2,9 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
+  constructor() {
+    console.log('UserEntity is working');
+  }
   @PrimaryGeneratedColumn()
   id: number;
 
