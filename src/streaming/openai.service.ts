@@ -1,0 +1,46 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import axios from 'axios';
+
+@Injectable()
+export class OpenAiService {
+  constructor(private readonly configService: ConfigService) {
+    console.log('OpenAiService is working');
+    console.log(
+      'OpenAIKey: ',
+      this.configService.get<string>('OPENAI_API_KEY'),
+    );
+  }
+
+  async generateText(prompt: string, modelType: string): Promise<string> {
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+
+    const model = this.getEngineForModel(modelType);
+
+    const response = await axios.post(
+      `https://api.openai.com/v1/chat/completions`,
+      {
+        model,
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 100,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    return response.data.choises[0]?.text || '';
+  }
+
+  private getEngineForModel(modelType: string): string {
+    switch (modelType) {
+      case 'gpt-3.5':
+        return 'text-davinci-003'; // Пример модели
+      default:
+        throw new Error('Invalid model type');
+    }
+  }
+}
