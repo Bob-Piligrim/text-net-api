@@ -32,13 +32,15 @@ export class OpenAiService {
       },
     );
 
-    return response.data.choises[0]?.text || '';
+    return response.data.choises[0]?.messages.content || '';
   }
 
   private getEngineForModel(modelType: string): string {
     switch (modelType) {
       case 'gpt-3.5':
-        return 'text-davinci-003'; // Пример модели
+        return 'gpt-3.5-turbo';
+      case 'gpt-4':
+        return 'gpt-4';
       default:
         throw new Error('Invalid model type');
     }
