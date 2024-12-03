@@ -29,7 +29,6 @@ import { StreamingModule } from './streaming/streaming.module';
 export class AppModule {
   constructor() {
     console.log('AppModule initialized');
-
     console.log('PG_HOST:', process.env.POSTGRES_HOST);
     console.log('PG_PORT:', process.env.POSTGRES_PORT);
     console.log('PG_USERNAME:', process.env.POSTGRES_USERNAME);
