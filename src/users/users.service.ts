@@ -12,7 +12,9 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
-  ) {}
+  ) {
+    console.log('UsersService is working');
+  }
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const { username, password } = createUserDto;

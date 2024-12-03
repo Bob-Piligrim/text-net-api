@@ -10,4 +10,8 @@ import { User } from './entity/users.entity';
   controllers: [UsersController],
   exports: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule {
+  constructor() {
+    console.log('UsersModule initialized');
+  }
+}
