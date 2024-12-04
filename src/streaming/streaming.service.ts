@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAiService } from './openai.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscriber } from 'rxjs';
 import { GenerateTextDto } from '../models/generateText.dto';
 
 @Injectable()
@@ -12,14 +12,22 @@ export class StreamingService {
   streamData(
     generateTextDto: GenerateTextDto,
   ): Observable<Partial<MessageEvent>> {
-    return new Observable((observer) => {
-      this.openAiService
-        .generateText(generateTextDto)
-        .then((response) => {
-          observer.next({ data: response });
+    return new Observable((observer: Subscriber<Partial<MessageEvent>>) => {
+      // Запускаем стриминг текста из OpenAI
+      this.openAiService.streamText(generateTextDto).subscribe({
+        next: (data: string) => {
+          // Оборачиваем данные в объект MessageEvent
+          observer.next({ data });
+        },
+        error: (err) => {
+          // Обработка ошибок
+          observer.error(err);
+        },
+        complete: () => {
+          // Завершение стрима
           observer.complete();
-        })
-        .catch((err) => observer.error(err));
+        },
+      });
     });
   }
 }

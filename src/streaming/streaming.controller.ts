@@ -1,4 +1,4 @@
-import { Body, Controller } from '@nestjs/common';
+import { Controller, Param, Query } from '@nestjs/common';
 import { StreamingService } from './streaming.service';
 import { Observable } from 'rxjs';
 import { Sse } from '@nestjs/common';
@@ -12,8 +12,10 @@ export class StreamingController {
 
   @Sse(':modelType')
   streamResponses(
-    @Body() generateTextDto: GenerateTextDto,
+    @Param('modelType') modelType: string,
+    @Query('input') input: string,
   ): Observable<Partial<MessageEvent>> {
+    const generateTextDto: GenerateTextDto = { modelType, input: input };
     return this.streamingService.streamData(generateTextDto);
   }
 }

@@ -1,6 +1,7 @@
 import { OpenAiService } from 'src/streaming/openai.service';
 import { AbstractModel } from './abstract.model';
 import { GenerateTextDto } from '../generateText.dto';
+import { firstValueFrom, Observable } from 'rxjs';
 
 export class OpenAiModel extends AbstractModel {
   private readonly modelType: string;
@@ -13,11 +14,14 @@ export class OpenAiModel extends AbstractModel {
     console.log('OpenAIModel is working');
   }
 
-  async generateText(input: string): Promise<string> {
+  generateText(input: string): Promise<Partial<string>> {
     const generateTextDto: GenerateTextDto = {
       input,
       modelType: this.modelType,
     };
-    return await this.openAiService.generateText(generateTextDto);
+    //  observable$ (согласно экосистемы RxJS,)
+    const observable$: Observable<string> =
+      this.openAiService.streamText(generateTextDto);
+    return firstValueFrom(observable$);
   }
 }
