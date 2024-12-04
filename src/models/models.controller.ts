@@ -1,7 +1,9 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ModelsService } from './models.service';
+import { AuthGuard } from '@nestjs/passport';
+import { GenerateTextDto } from './generateText.dto';
 
-@Controller()
+@Controller('models')
 export class ModelsController {
   constructor(private readonly modelservice: ModelsService) {
     console.log('ModelsController is working');
@@ -16,7 +18,7 @@ export class ModelsController {
         cost: 20,
       },
       {
-        name: 'GeminiFlash',
+        name: 'gpt-3.5-turbo',
         description: 'A fast, efficient model.',
         cost: 10,
       },
@@ -24,16 +26,12 @@ export class ModelsController {
     return models;
   }
 
-  @Get('generate')
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':userId/generate')
   async generateText(
-    @Query('model') modelType: string,
-    @Query('input') input: string,
-  ) {
-    const model = this.modelservice.getModel(modelType);
-    if (!model) {
-      throw new Error('Model is not found');
-    }
-    const response = await model.generateText(input);
-    return { data: response };
+    @Param('userId') userId: number,
+    @Body() generateTextDto: GenerateTextDto,
+  ): Promise<any> {
+    return this.modelservice.generateText(userId, generateTextDto);
   }
 }

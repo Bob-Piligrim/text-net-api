@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
+  Param,
   Post,
   Put,
   Request,
@@ -11,6 +13,7 @@ import { UsersService } from './users.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/users.dto';
 import { UpdateBalanceDto } from './dto/update.balance.dto';
+import { User } from './entity/users.entity';
 
 @Controller('users')
 export class UsersController {
@@ -26,21 +29,35 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('balance')
-  async getBalance(@Request() req): Promise<{ balance: number }> {
+  @Get('username')
+  async findUserByName(@Request() req): Promise<User> {
     const user = await this.userService.findByUsername(req.user.username);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return { ...user, password: undefined };
+  }
+
+  // Намудрил, лучше оставить вместо этих двух методов только один общий.
+  // Баланс показывает 0, когда default 100 ???
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id/balance')
+  async getBalance(@Request() req): Promise<{ balance: number }> {
+    const user = await this.userService.findByUsername(req.user.id);
     return { balance: user.balance };
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Put('balance')
+  @Put(':id/balance')
   async updateBalance(
-    @Request() req,
+    @Param('id') id: number,
     @Body() updateBalanceDto: UpdateBalanceDto,
+    @Request() req,
   ): Promise<void> {
     if (req.user.role !== 'admin') {
       throw new Error('Unauthorized');
     }
-    await this.userService.updateBalance(req.user.id, updateBalanceDto);
+    await this.userService.updateBalance(req.user.id, updateBalanceDto.amount);
   }
 }
