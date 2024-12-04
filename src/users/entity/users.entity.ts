@@ -14,7 +14,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: 0 })
+  @Column({ default: 100 })
   balance?: number;
 
   @Column({ default: 'client' })

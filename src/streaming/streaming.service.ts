@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAiService } from './openai.service';
 import { Observable } from 'rxjs';
+import { GenerateTextDto } from '../models/generateText.dto';
 
 @Injectable()
 export class StreamingService {
@@ -9,12 +10,11 @@ export class StreamingService {
   }
 
   streamData(
-    input: string,
-    modelType: string,
+    generateTextDto: GenerateTextDto,
   ): Observable<Partial<MessageEvent>> {
     return new Observable((observer) => {
       this.openAiService
-        .generateText(input, modelType)
+        .generateText(generateTextDto)
         .then((response) => {
           observer.next({ data: response });
           observer.complete();

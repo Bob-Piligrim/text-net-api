@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { GenerateTextDto } from '../models/generateText.dto';
 
 @Injectable()
 export class OpenAiService {
@@ -12,8 +13,10 @@ export class OpenAiService {
     );
   }
 
-  async generateText(prompt: string, modelType: string): Promise<string> {
+  async generateText(generateTextDto: GenerateTextDto): Promise<string> {
     const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+
+    const { modelType, input: prompt } = generateTextDto;
 
     const model = this.getEngineForModel(modelType);
 
@@ -32,7 +35,7 @@ export class OpenAiService {
       },
     );
 
-    return response.data.choises[0]?.messages.content || '';
+    return response.data.choiсes[0]?.messages.content || '';
   }
 
   private getEngineForModel(modelType: string): string {

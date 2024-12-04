@@ -1,5 +1,6 @@
 import { OpenAiService } from 'src/streaming/openai.service';
 import { AbstractModel } from './abstract.model';
+import { GenerateTextDto } from '../generateText.dto';
 
 export class OpenAiModel extends AbstractModel {
   private readonly modelType: string;
@@ -13,6 +14,10 @@ export class OpenAiModel extends AbstractModel {
   }
 
   async generateText(input: string): Promise<string> {
-    return await this.openAiService.generateText(input, this.modelType);
+    const generateTextDto: GenerateTextDto = {
+      input,
+      modelType: this.modelType,
+    };
+    return await this.openAiService.generateText(generateTextDto);
   }
 }

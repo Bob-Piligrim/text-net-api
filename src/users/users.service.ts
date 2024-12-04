@@ -3,8 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/users.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-
-import { UpdateBalanceDto } from './dto/update.balance.dto';
 import { CreateUserDto } from './dto/users.dto';
 
 @Injectable()
@@ -30,18 +28,23 @@ export class UsersService {
     return this.userRepository.findOne({ where: { username } });
   }
 
+  async getBalance(userId: number): Promise<number> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return user.balance;
+  }
+
   async checkBalance(userId: number, cost: number): Promise<boolean> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     return user.balance >= cost;
   }
 
-  async updateBalance(
-    userId: number,
-    updateBalanceDto: UpdateBalanceDto,
-  ): Promise<void> {
+  async updateBalance(userId: number, amount: number): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (user) {
-      user.balance += updateBalanceDto.amount;
+      user.balance += amount;
       await this.userRepository.save(user);
     }
   }

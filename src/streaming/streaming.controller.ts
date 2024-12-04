@@ -1,7 +1,8 @@
-import { Controller, Query } from '@nestjs/common';
+import { Body, Controller } from '@nestjs/common';
 import { StreamingService } from './streaming.service';
 import { Observable } from 'rxjs';
 import { Sse } from '@nestjs/common';
+import { GenerateTextDto } from '../models/generateText.dto';
 
 @Controller('stream')
 export class StreamingController {
@@ -11,9 +12,8 @@ export class StreamingController {
 
   @Sse(':modelType')
   streamResponses(
-    @Query('input') input: string,
-    @Query('modelType') modelType: string,
+    @Body() generateTextDto: GenerateTextDto,
   ): Observable<Partial<MessageEvent>> {
-    return this.streamingService.streamData(input, modelType);
+    return this.streamingService.streamData(generateTextDto);
   }
 }
