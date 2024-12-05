@@ -2,12 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
-
-interface User {
-  username: string;
-  id: number;
-  role: string;
-}
+import { LoginDto } from './auth.login.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +27,12 @@ export class AuthService {
   //Метод login выполняет следующие шаги:
   // Создает объект payload, который содержит важные данные о пользователе (имя пользователя, идентификатор и роль).
   // Создает и возвращает объект, содержащий токен доступа, который можно использовать для аутентификации в последующих запросах.
-  async login(user: User) {
+  async login(loginDto: LoginDto) {
+    const user = await this.validateUser(loginDto.username, loginDto.password);
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+
     const payload = { username: user.username, sub: user.id, role: user.role };
     return {
       access_token: this.jwtService.sign(payload),

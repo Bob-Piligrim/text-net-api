@@ -22,7 +22,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * Проверяет полезную нагрузку JWT и возвращает информацию о пользователе.
    * @param payload - полезная нагрузка JWT, содержащая информацию о пользователе.
    * @returns Пользовательский объект с id, username и role.
-   * @throws UnauthorizedException если полезная нагрузка недействительна.
+   * @throw UnauthorizedException если полезная нагрузка недействительна.
    */
   async validate(payload: JwtPayload) {
     if (!payload || !payload.sub) {
