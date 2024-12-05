@@ -38,7 +38,7 @@ $ npm run start:prod
 
 ## Stay in touch
 
-- Author - KTagir Yarmeev
+- Author - Tagir Yarmeev
 - Website - https://github.com/Bob-Piligrim
 
 ## License
