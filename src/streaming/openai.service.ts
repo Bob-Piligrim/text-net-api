@@ -23,7 +23,8 @@ export class OpenAiService {
     return new Observable((observer: Subscriber<string>) => {
       axios
         .post(
-          `https://api.openai.com/v1/chat/completions`,
+          'https://bothub.chat/api/v2/openai/v1',
+          /* `https://api.openai.com/v1/chat/completions` */
           {
             model,
             messages: [{ role: 'user', content: prompt }],

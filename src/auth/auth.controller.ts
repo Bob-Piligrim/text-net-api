@@ -1,7 +1,14 @@
 import { Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocalGuard } from '../auth/local.guard';
+import {
+  ApiBadRequestResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {
@@ -10,6 +17,12 @@ export class AuthController {
 
   @UseGuards(LocalGuard)
   @Post('login')
+  @ApiOperation({ summary: 'Authenticate user and log them in' })
+  @ApiResponse({
+    status: 201,
+    description: 'User succesfully logged in',
+  })
+  @ApiBadRequestResponse({ description: 'Invalid input data' })
   async login(@Request() req) {
     return this.authService.login(req.user);
   }

@@ -14,7 +14,14 @@ import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/users.dto';
 import { UpdateBalanceDto } from './dto/update.balance.dto';
 import { User } from './entity/users.entity';
+import {
+  ApiBadRequestResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {
@@ -22,6 +29,13 @@ export class UsersController {
   }
 
   @Post('register')
+  @ApiOperation({ summary: 'Register a new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'User registered successfully',
+    type: User,
+  })
+  @ApiBadRequestResponse({ description: 'Invalid input data' })
   async registerUser(@Body() createUserDto: CreateUserDto) {
     console.log('registerUser method is called');
     const user = await this.userService.createUser(createUserDto);
@@ -30,6 +44,9 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get('username')
+  @ApiOperation({ summary: 'Get user by username' })
+  @ApiResponse({ status: 201, description: 'User found', type: User })
+  @ApiBadRequestResponse({ description: 'USer not found' })
   async findUserByName(@Request() req): Promise<User> {
     const user = await this.userService.findByUsername(req.user.username);
     if (!user) {
@@ -43,6 +60,13 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id/balance')
+  @ApiOperation({ summary: 'Get user balance' })
+  @ApiResponse({
+    status: 200,
+    description: 'User balance found',
+    schema: { example: { balance: 100 } },
+  })
+  @ApiBadRequestResponse({ description: 'User balance not found' })
   async getBalance(@Request() req): Promise<{ balance: number }> {
     const user = await this.userService.findByUsername(req.user.id);
     return { balance: user.balance };
@@ -50,6 +74,12 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':id/balance')
+  @ApiOperation({ summary: 'Update user balance' })
+  @ApiResponse({
+    status: 200,
+    description: 'User balance updated successfully',
+  })
+  @ApiBadRequestResponse({ description: 'User balance not updated' })
   async updateBalance(
     @Param('id') id: number,
     @Body() updateBalanceDto: UpdateBalanceDto,
