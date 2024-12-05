@@ -10,5 +10,5 @@ export class GenerateTextDto {
   @ApiProperty({ description: 'Users text' })
   @IsNotEmpty()
   @IsString()
-  input: string; // Входной текст для генерации
+  input: string;
 }

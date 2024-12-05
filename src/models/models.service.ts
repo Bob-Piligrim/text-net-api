@@ -10,13 +10,13 @@ import { GenerateTextDto } from './generateText.dto';
 export class ModelsService {
   private readonly token: Token[] = [
     { modelType: 'gpt4', costPer100Tokens: 20 }, // 20 cred
-    { modelType: 'gpt3_5', costPer100Tokens: 20 }, // 20 cred
+    { modelType: 'geminiFlesh', costPer100Tokens: 20 }, // 20 cred
     { modelType: 'localModel', costPer100Tokens: 10 }, // 10 cred
   ];
 
   private readonly models = {
-    gpt4: () => new OpenAiModel(this.openAiService, 'gpt-4'),
-    gpt3_5: () => new OpenAiModel(this.openAiService, 'gpt-3.5-turbo'),
+    gpt4: () => new OpenAiModel(this.openAiService, 'gpt4'),
+    geminiFlesh: () => new OpenAiModel(this.openAiService, 'geminiFlesh'),
     localModel: LocalModel,
   };
 

@@ -1,0 +1,419 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/users/register": {
+      "post": {
+        "operationId": "UsersController_registerUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/username/{username}": {
+      "get": {
+        "operationId": "UsersController_findUserByName",
+        "parameters": [
+          {
+            "name": "username",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "summary": "Get user by username",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/balance": {
+      "get": {
+        "operationId": "UsersController_getBalance",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User balance found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "example": {
+                    "balance": 100
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User balance not found"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "summary": "Get user balance",
+        "tags": [
+          "users"
+        ]
+      },
+      "put": {
+        "operationId": "UsersController_updateBalance",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBalanceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User balance updated successfully"
+          },
+          "400": {
+            "description": "User balance not updated"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "summary": "Update user balance",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User succesfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "summary": "Authenticate user and log them in",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/models/info": {
+      "get": {
+        "operationId": "ModelsController_getModelsInfo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Information about model retrieved succesfully"
+          }
+        },
+        "summary": "Get information about available models",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/models/{userId}/generate": {
+      "post": {
+        "operationId": "ModelsController_generateText",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTextDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Text generated succesfully"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "summary": "Generate text using model for user",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/stream/{modelType}": {
+      "get": {
+        "operationId": "StreamingController_streamResponses",
+        "parameters": [
+          {
+            "name": "modelType",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "input",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Data streamed successfully"
+          }
+        },
+        "summary": "Stream responses for specified model",
+        "tags": [
+          "stream"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "text-net-api",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "jwt": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the user"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password of the user"
+          },
+          "balance": {
+            "type": "number",
+            "description": "Balance of the user",
+            "default": 100
+          },
+          "role": {
+            "type": "string",
+            "description": "Role of the user",
+            "default": "client"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "balance": {
+            "type": "number",
+            "default": 100
+          },
+          "role": {
+            "type": "string",
+            "default": "client"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "password",
+          "balance",
+          "role"
+        ]
+      },
+      "UpdateBalanceDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Users balance exchange for Amount "
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "Username of the user"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password of the user"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ]
+      },
+      "GenerateTextDto": {
+        "type": "object",
+        "properties": {
+          "modelType": {
+            "type": "string",
+            "description": "Name of the model"
+          },
+          "input": {
+            "type": "string",
+            "description": "Users text"
+          }
+        },
+        "required": [
+          "modelType",
+          "input"
+        ]
+      }
+    }
+  }
+}

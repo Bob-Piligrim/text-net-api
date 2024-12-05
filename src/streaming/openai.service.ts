@@ -6,6 +6,8 @@ import { Observable, Subscriber } from 'rxjs';
 
 @Injectable()
 export class OpenAiService {
+  private readonly apiUrl = 'https://bothub.chat/api/v2/openai/v1';
+
   constructor(private readonly configService: ConfigService) {
     console.log('OpenAiService is working');
     console.log(
@@ -23,8 +25,8 @@ export class OpenAiService {
     return new Observable((observer: Subscriber<string>) => {
       axios
         .post(
-          'https://bothub.chat/api/v2/openai/v1',
-          /* `https://api.openai.com/v1/chat/completions` */
+          /* 'https://bothub.chat/api/v2/openai/v1' */
+          `https://api.openai.com/v1/chat/completions`,
           {
             model,
             messages: [{ role: 'user', content: prompt }],
@@ -70,10 +72,10 @@ export class OpenAiService {
 
   private getEngineForModel(modelType: string): string {
     switch (modelType) {
-      case 'gpt-3.5':
-        return 'gpt-3.5-turbo';
-      case 'gpt-4':
-        return 'gpt-4';
+      case 'gpt4':
+        return 'gpt4';
+      case 'geminiFlesh':
+        return 'geminiFlesh';
       default:
         throw new Error('Invalid model type');
     }

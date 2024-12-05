@@ -1,13 +1,15 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ModelsService } from './models.service';
 /* import { AuthGuard } from '@nestjs/passport'; */
 import { GenerateTextDto } from './generateText.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('models')
 @Controller('models')
@@ -30,7 +32,7 @@ export class ModelsController {
         cost: 20,
       },
       {
-        name: 'gpt-3.5-turbo',
+        name: 'Gemini-flash',
         description: 'A fast, efficient model.',
         cost: 10,
       },
@@ -38,8 +40,9 @@ export class ModelsController {
     return models;
   }
 
-  /*@UseGuards(AuthGuard('jwt')) */
+  @UseGuards(AuthGuard('jwt'))
   @Post(':userId/generate')
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Generate text using model for user' })
   @ApiResponse({ status: 200, description: 'Text generated succesfully' })
   @ApiBadRequestResponse({ description: 'Invalid input data' })

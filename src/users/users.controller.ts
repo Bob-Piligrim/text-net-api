@@ -16,6 +16,7 @@ import { UpdateBalanceDto } from './dto/update.balance.dto';
 import { User } from './entity/users.entity';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -43,12 +44,13 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Get('username')
+  @Get('username/:username')
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Get user by username' })
   @ApiResponse({ status: 201, description: 'User found', type: User })
-  @ApiBadRequestResponse({ description: 'USer not found' })
-  async findUserByName(@Request() req): Promise<User> {
-    const user = await this.userService.findByUsername(req.user.username);
+  @ApiBadRequestResponse({ description: 'User not found' })
+  async findUserByName(@Param('username') username: string): Promise<User> {
+    const user = await this.userService.findByUsername(username);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -60,6 +62,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get(':id/balance')
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Get user balance' })
   @ApiResponse({
     status: 200,
@@ -67,13 +70,14 @@ export class UsersController {
     schema: { example: { balance: 100 } },
   })
   @ApiBadRequestResponse({ description: 'User balance not found' })
-  async getBalance(@Request() req): Promise<{ balance: number }> {
-    const user = await this.userService.findByUsername(req.user.id);
-    return { balance: user.balance };
+  async getBalance(@Param('id') id: number): Promise<{ balance: number }> {
+    const balance = await this.userService.getBalance(id);
+    return { balance };
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':id/balance')
+  @ApiBearerAuth('jwt')
   @ApiOperation({ summary: 'Update user balance' })
   @ApiResponse({
     status: 200,
