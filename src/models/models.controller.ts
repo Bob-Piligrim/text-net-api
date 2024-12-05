@@ -1,8 +1,15 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ModelsService } from './models.service';
-import { AuthGuard } from '@nestjs/passport';
+/* import { AuthGuard } from '@nestjs/passport'; */
 import { GenerateTextDto } from './generateText.dto';
+import {
+  ApiBadRequestResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('models')
 @Controller('models')
 export class ModelsController {
   constructor(private readonly modelservice: ModelsService) {
@@ -10,6 +17,11 @@ export class ModelsController {
   }
 
   @Get('info')
+  @ApiOperation({ summary: 'Get information about available models' })
+  @ApiResponse({
+    status: 200,
+    description: 'Information about model retrieved succesfully',
+  })
   getModelsInfo() {
     const models = [
       {
@@ -26,9 +38,12 @@ export class ModelsController {
     return models;
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  /*@UseGuards(AuthGuard('jwt')) */
   @Post(':userId/generate')
-  async generateText(
+  @ApiOperation({ summary: 'Generate text using model for user' })
+  @ApiResponse({ status: 200, description: 'Text generated succesfully' })
+  @ApiBadRequestResponse({ description: 'Invalid input data' })
+  generateText(
     @Param('userId') userId: number,
     @Body() generateTextDto: GenerateTextDto,
   ): Promise<any> {

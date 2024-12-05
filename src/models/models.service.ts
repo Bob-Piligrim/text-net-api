@@ -9,8 +9,8 @@ import { GenerateTextDto } from './generateText.dto';
 @Injectable()
 export class ModelsService {
   private readonly token: Token[] = [
-    { modelType: 'gpt-4', costPer100Tokens: 20 }, // 20 cred
-    { modelType: 'gpt-3.5-turbo', costPer100Tokens: 20 }, // 20 cred
+    { modelType: 'gpt4', costPer100Tokens: 20 }, // 20 cred
+    { modelType: 'gpt3_5', costPer100Tokens: 20 }, // 20 cred
     { modelType: 'localModel', costPer100Tokens: 10 }, // 10 cred
   ];
 
@@ -32,6 +32,12 @@ export class ModelsService {
     generateTextDto: GenerateTextDto,
   ): Promise<string> {
     const { modelType, input } = generateTextDto;
+    console.log(
+      'Attempting to generate text with modelType:',
+      modelType,
+      'and input:',
+      input,
+    );
     const modelFactory = this.models[modelType];
     if (modelFactory) {
       const model = modelFactory();
@@ -59,6 +65,7 @@ export class ModelsService {
     }
   }
   private getTokenCost(modelType: string): Token {
+    console.log('Checking token cost for modelType:', modelType);
     const cost = this.token.find((tc) => tc.modelType === modelType);
     if (!cost) {
       throw new Error('Invalid model type');
